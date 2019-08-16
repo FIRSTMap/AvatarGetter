@@ -2,6 +2,9 @@
 /bin
 /obj
 
+# VS Code
+.vscode
+
 # FMS API keys cannot be redistributed
 FRC_API_KEY
 
