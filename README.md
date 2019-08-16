@@ -1,7 +1,13 @@
 # FIRSTMap Avatar Getter
 This program downloads FRC avatars from the FRC API
 ([https://frc-events.firstinspires.org/services/API](https://frc-events.firstinspires.org/services/API))
-and stores them in a sprite sheet.
+and stores them in a sprite sheet. This is used to update
+the FRC avatars for FIRSTMap (`data/avatars.png` and
+`data/avatars.json` in the FIRSTMap repository). It merges
+the old avatar sprite sheet with the new avatars, so it
+can be run during the time teams are allowed to upload
+new avatars without deleting the old ones for teams that
+have not uploaded an FRC avatar for the new season (yet).
 
 It must be called with the FIRSTMap `data` folder as an
 argument. It uses the `teams.json` as a list of the
@@ -14,7 +20,7 @@ data directory, it will be copied to the new sprite sheet.
 For example, if team 1234 does not have an avatar for the
 2019 season, but there is an avatar in the `avatars.png` /
 `avatars.json` sprite sheet in the FIRSTMap data directory
-(left over from the 2018 season), it will be copied to the
+left over from the 2018 season, it will be copied to the
 new sprite sheet that is being generated.
 
 ## Usage:
