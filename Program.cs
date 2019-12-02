@@ -145,6 +145,11 @@ namespace AvatarGetter
 
         // All FRC avatars are 40x40.
         public const int AVATAR_SIZE = 40;
+        // Each sprite has a 2 pixel border between it and the next sprite
+        // so that when the whole sprite sheet is resized the avatars
+        // do not bleed into each other. Otherwise borders appear on some
+        // avatars on certain displays.
+        public const int AVATAR_BORDER = 2;
 
         static async Task<List<Avatar>> DownloadAvatars()
         {
@@ -250,7 +255,7 @@ namespace AvatarGetter
             }
 
             int sheetSize = (int)Math.Ceiling(Math.Sqrt(avatars.Count));
-            Image<Rgba32> sheet = new Image<Rgba32>(sheetSize * AVATAR_SIZE, sheetSize * AVATAR_SIZE);
+            Image<Rgba32> sheet = new Image<Rgba32>(sheetSize * (AVATAR_SIZE + AVATAR_BORDER), sheetSize * (AVATAR_SIZE + AVATAR_BORDER));
 
             // The (new) avatar locations in the spritesheet
             AvatarInfo avatarInfo = new AvatarInfo(sheetSize);
@@ -260,8 +265,8 @@ namespace AvatarGetter
             for (int i = 0; i < avatars.Count; i++)
             {
                 Avatar avatar = avatars[i];
-                int x = (i % sheetSize) * AVATAR_SIZE;
-                int y = (i / sheetSize) * AVATAR_SIZE;
+                int x = (i % sheetSize) * (AVATAR_SIZE + AVATAR_BORDER);
+                int y = (i / sheetSize) * (AVATAR_SIZE + AVATAR_BORDER);
 
                 avatar.DrawToSpritesheet(sheet, x, y);
                 avatarInfo.locations.Add(avatar.TeamNumber, new Loc(x, y));
