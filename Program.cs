@@ -1,16 +1,20 @@
-﻿using Newtonsoft.Json;
+﻿// Copyright (C) Ethan Shaw
+// This program is licensed under the MIT License.
+// See the accompanying LICENSE file for more information.
+
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
-using SixLabors.Primitives;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using System.Drawing.Imaging;
 using System.Linq;
+using System.Net;
 
 namespace AvatarGetter
 {
@@ -55,8 +59,7 @@ namespace AvatarGetter
 
                 input.Write(_Data, 0, _Data.Length);
                 input.Position = 0;
-
-                System.Drawing.Bitmap.FromStream(input).Save(output, ImageFormat.Bmp);
+                System.Drawing.Image.FromStream(input).Save(output, ImageFormat.Bmp);
                 output.Position = 0;
                 img = Image.Load<Rgba32>(output);
             }
@@ -181,6 +184,11 @@ namespace AvatarGetter
             {
                 HttpResponseMessage msg = await _Client.GetAsync("https://frc-api.firstinspires.org/v2.0/" + YEAR + "/avatars?page=" + page.ToString());
 
+                if (msg.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    Console.WriteLine("Error: Attempt to access FRC API resulted in a 401 Unauthorized!");
+                }
+
                 string jsonStr = await msg.Content.ReadAsStringAsync();
 
                 JObject obj = JObject.Parse(jsonStr);
@@ -197,7 +205,7 @@ namespace AvatarGetter
                         {
                             string base64 = avatar.Value<string>();
 
-                            if (base64 != null)
+                            if (!string.IsNullOrEmpty(base64))
                             {
                                 _ValidTeams.Remove(teamNum);
                                 avatars.Add(new Base64Avatar(teamNum, base64));
@@ -288,7 +296,7 @@ namespace AvatarGetter
             if (args.Length != 1)
             {
                 Console.WriteLine("Error: wrong number of arguments: " + args.Length);
-                Console.WriteLine("Usage: image-stitcher [firstmap data directory]");
+                Console.WriteLine("Usage: AvatarGetter [firstmap data directory]");
                 Console.WriteLine("Generates a spritesheet from images that are all the same size and are square.");
                 return;
             }
